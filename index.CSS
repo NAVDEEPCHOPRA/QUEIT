@@ -1,0 +1,166 @@
+
+    body {
+        min-height: 100vh;
+        background: var(--bg-gradient);
+        font-family: 'Montserrat', 'Orbitron', Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        margin: 0;
+        padding: 0;
+    }
+    .button-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        margin-top: 20px;
+        z-index: 2;
+    }
+    .button {
+        background: var(--neon1, #0ff1ce);
+        color: #181818;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 36px;
+        font-family: 'Montserrat', 'Orbitron', Arial, sans-serif;
+        font-size: 1.1em;
+        font-weight: bold;
+        cursor: pointer;
+        margin: 6px 0;
+        box-shadow: 0 0 12px var(--neon1, #0ff1ce), 0 2px 8px #0008;
+        transition: all 0.2s;
+        outline: none;
+        letter-spacing: 1px;
+        z-index: 1;
+        position: relative;
+        opacity: 1;
+        visibility: visible;
+    }
+    .button:active {
+        transform: scale(0.97);
+        box-shadow: 0 0 6px var(--neon1, #0ff1ce);
+    }
+    body {
+    background: radial-gradient(ellipse at top left, #0ff1ce33 0%, #232347 100%);
+    overflow-x: hidden;
+    font-family: 'Orbitron', 'Montserrat', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+
+
+header h1 {
+    text-align: center;
+    font-size: 2.8em;
+    letter-spacing: 0.1em;
+    background: linear-gradient(90deg, #0ff1ce 30%, #ff00ea 70%);
+    -webkit-background-clip: text;
+
+    animation: neonPulse 2s infinite alternate;
+}
+
+@keyframes neonPulse {
+    0% { text-shadow: 0 0 18px #0ff1ce, 0 0 2px #fff; }
+    50% { text-shadow: 0 0 25px #ff0026, 0 0 8px #fff; }
+    100% { text-shadow: 0 0 32px #ff00ea, 0 0 8px #fff; }
+}
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2em;
+    padding: 32px;
+    backdrop-filter: blur(10px);
+}
+
+.button {
+    background: linear-gradient(90deg, #0ff1ce 0%, #ff00ea 100%);
+    border: none;
+    color: #181818;
+    padding: 16px 36px;
+    margin: 10px 0;
+    font-size: 1em;
+    font-weight: bold;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+footer {
+    text-align: center;
+    color: #b3b3b3;
+    margin-top: 40px;
+    padding: 16px;
+    font-size: 0.9em;
+}
+
+.particles, .cyber-glow, .cyber-lines {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    width: 100vw;
+    height: 100vh;
+}
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .confetti-piece {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            opacity: 0.95;
+            will-change: transform;
+            box-shadow:
+                0 0 8px 2px #fff,
+                0 0 16px 4px currentColor;
+            animation: confetti-spin 2.2s linear infinite;
+        }
+        @keyframes confetti-spin {
+            0% { transform: scale(1) rotate(0deg);}
+            100% { transform: scale(1.2) rotate(360deg);}
+        }
+        @media (max-width: 768px) {
+    header h1 {
+        font-size: 1.8em;
+    }
+    .button {
+        font-size: 0.9em;
+        padding: 12px 24px;
+    }
+    .button-container {
+        padding: 16px;
+    }
+    .confetti-piece {
+        width: 8px !important;
+        height: 8px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.4em;
+    }
+    .button {
+        font-size: 0.8em;
+        padding: 10px 20px;
+    }
+    .confetti-piece {
+        width: 6px !important;
+        height: 6px !important;
+    }
+}
