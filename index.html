@@ -1,49 +1,177 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEV:NXVDPPP</title>
-    <meta name="description" content="Elite Patch - Cyber Neon Animated Landing Page with AI, Social, and Elite Cheats.">
-    <meta name="theme-color" content="#0ff1ce">
-    <link rel="icon" href="logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-    <script defer src="index.js"></script>
-    <style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Happy Raksha Bandhan — For My Sisters</title>
+  <meta name="description" content="A neon/Rakhi celebration page made with love." />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: Montserrat, sans-serif;
+      background: linear-gradient(180deg, #020204 0%, #071021 60%);
+      color: #e9f6f2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 600px;
+      box-shadow: 0 0 20px rgba(255, 45, 149, 0.2);
+    }
+    h1 {
+      font-family: Orbitron, sans-serif;
+      color: #0ff1ce;
+      font-size: 2em;
+    }
+    p {
+      color: rgba(255, 255, 255, 0.8);
+    }
+    button {
+      background: linear-gradient(90deg, #0ff1ce, #ff2d95);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: #021017;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
 
-    </style>
-    <script>
-        // Improved confetti/party popper effect for birthday
+  /* Bottom-center neon brand */
+   #dev-brand{
+    position: fixed;
+    left: 50%;
+    bottom: 20px;                 /* distance from bottom; change as needed */
+    transform: translateX(-50%);
+    font-family: 'Orbitron', 'Montserrat', sans-serif;
+    font-weight: 700;
+    letter-spacing: 2px;
+    font-size: 18px;              /* change size if you want it bigger */
+    color: #0ff1ce;
+    background: rgba(2,5,10,0.35);
+    padding: 8px 16px;
+    border-radius: 999px;
+    box-shadow:
+      0 4px 18px rgba(15,241,206,0.12),
+      0 0 28px rgba(15,241,206,0.08) inset;
+    text-shadow:
+      0 0 6px rgba(15,241,206,0.9),
+      0 0 12px rgba(255,45,149,0.06);
+    z-index: 9999;
+    pointer-events: none;         /* so it won't block clicks */
+    opacity: 0;
+    animation: fadeInUp 700ms ease forwards, neonPulse 2.4s ease-in-out infinite 1s;
+  }
 
-    </script>
+  @keyframes fadeInUp {
+    from { transform: translate(-50%, 10px); opacity: 0; }
+    to   { transform: translate(-50%, 0); opacity: 1; }
+  }
+
+  @keyframes neonPulse {
+    0%   { filter: drop-shadow(0 0 0px rgba(15,241,206,0.0)); transform: translateX(-50%) scale(1); }
+    50%  { filter: drop-shadow(0 0 12px rgba(15,241,206,0.18)); transform: translateX(-50%) scale(1.02); }
+    100% { filter: drop-shadow(0 0 0px rgba(15,241,206,0.0)); transform: translateX(-50%) scale(1); }
+  }
+
+  /* Smaller screens: reduce size */
+  @media (max-width:420px){
+    #dev-brand{ font-size:14px; padding:6px 12px; bottom:14px; }
+  }
+
+  </style>
 </head>
 <body>
-    <div class="particles">
-        <div class="particle particle1"></div>
-        <div class="particle particle2"></div>
-        <div class="particle particle3"></div>
-        <div class="particle particle4"></div>
-        <div class="particle particle5"></div>
-    </div>
-    <div class="cyber-glow"></div>
-    <div class="cyber-lines">
-        <svg viewBox="0 0 400 200" fill="none">
-        </svg>
-    </div>
-    <header>
-        <H2>___________________________________________________________________________</H2>
-        <h1>H A P P Y</h1>
-        <H1>B I R T H D A Y</H1>
-        <H1>🎂 B I R J U 🎂</H1>
-        <H2>___________________________________________________________________________</H2>
-<h1>FROM</h1>
-<H1>NAVDEEP</H1>
-<H2>___________________________________________________________________________</H2>
-    </header>
+  <div class="card">
+    <h1>Happy Raksha Bandhan❤️</h1>
+
+
+    <button id="tieBtn">CLICK ME FOR GIFT 💫</button>
+    <div id="dev-brand">DEV-NXVDPPP</div>
+  </div>
+  
+  <canvas id="confettiCanvas"></canvas>
+
+  <script>
+    const tieBtn = document.getElementById('tieBtn');
+    const confettiCanvas = document.getElementById('confettiCanvas');
+
+    function Confetti(canvas) {
+      const ctx = canvas.getContext('2d');
+      let w, h, pieces = [];
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      function reset() {
+        pieces = [];
+        for (let i = 0; i < 120; i++) {
+          pieces.push({
+            x: Math.random() * w,
+            y: Math.random() * h - h,
+            r: Math.random() * 6 + 4,
+            sx: (Math.random() * 2 - 1) * 2,
+            sy: Math.random() * 3 + 2,
+            rot: Math.random() * 360,
+            vr: Math.random() * 6 - 3,
+            color: `hsla(${Math.floor(Math.random() * 360)},90%,60%,1)`
+          });
+        }
+      }
+      reset();
+
+      let running = false;
+      function step() {
+        ctx.clearRect(0, 0, w, h);
+        for (const p of pieces) {
+          p.x += p.sx;
+          p.y += p.sy;
+          p.rot += p.vr;
+          if (p.y > h + 20) {
+            p.y = -10;
+            p.x = Math.random() * w;
+          }
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot * Math.PI / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 1.6);
+          ctx.restore();
+        }
+        if (running) requestAnimationFrame(step);
+      }
+
+      return {
+        burst() {
+          reset();
+          running = true;
+          step();
+          setTimeout(() => running = false, 4000);
+        }
+      }
+    }
+
+    const confetti = new Confetti(confettiCanvas);
+
+    tieBtn.addEventListener('click', () => {
+      confetti.burst();
+    });
+  </script>
 </body>
 </html>
